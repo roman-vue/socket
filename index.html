@@ -1,0 +1,15 @@
+!DOCTYPE html>
+<html>
+<head>
+  <title>Socket.IO Client</title>
+</head>
+<body>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    socket.on('error', (errorObj) => {
+      console.log('Received error:', errorObj);
+    });
+  </script>
+</body>
+</html>
