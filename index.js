@@ -6,21 +6,7 @@ const io = require("socket.io")(http,{
     origins: ['http://localhost:4200']
   }
 });
-const cors = require("cors")
 
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  next();
-});
-
-
-app.use(express.static("public"));
-
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
-});
 
 io.on("connection", (socket) => {
   console.log("A client connected.");
@@ -53,7 +39,7 @@ io.on("connection", (socket) => {
     const monitSmsObj = {
       cantsms: 1,
     };
-    // socket.emit("error", errorObj);
+    socket.emit("error", errorObj);
     socket.emit("info", infoObj);
     socket.emit("monit", monitObj);
     socket.emit("monit_sms", monitSmsObj);
@@ -63,6 +49,48 @@ io.on("connection", (socket) => {
     console.log("A client disconnected.");
   });
 });
+
+io.of('/test')
+.on("connection", (socket)=>{
+  console.log("A client connected.");
+  let count = 0
+  setInterval(() => {
+    const errorObj = {
+      t: "callOut",
+      usr: "sa",
+      data: `${new Date().toLocaleTimeString()}: Error-TEST `
+    };
+    const infoObj = {
+      t: "callOut",
+      usr: "sa",
+      data: `${new Date().toLocaleTimeString()}: Error-TEST `,
+    };
+    const monitObj = {
+      inProcess: count++,
+      ordersDetail: [
+        {
+          usuario: "sa",
+          callOrders: count++,
+        },
+        {
+          usuario: "TESTER",
+          callOrders: count++,
+        },
+      ],
+    };
+    const monitSmsObj = {
+      cantsms: count++,
+    };
+    socket.emit("error", errorObj);
+    socket.emit("info", infoObj);
+    socket.emit("monit", monitObj);
+    socket.emit("monit_sms", monitSmsObj);
+  }, 2000);
+
+  socket.on("disconnect", () => {
+    console.log("A client disconnected.");
+  });
+})
 
 http.listen(3002, () => {
   console.log("Server listening on port 3000");
