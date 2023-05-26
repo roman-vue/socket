@@ -53,11 +53,11 @@ io.on("connection", (socket) => {
     const monitSmsObj = {
       cantsms: 1,
     };
-    socket.emit("error", errorObj);
+    // socket.emit("error", errorObj);
     socket.emit("info", infoObj);
     socket.emit("monit", monitObj);
     socket.emit("monit_sms", monitSmsObj);
-  }, 1000);
+  }, 2000);
 
   socket.on("disconnect", () => {
     console.log("A client disconnected.");
